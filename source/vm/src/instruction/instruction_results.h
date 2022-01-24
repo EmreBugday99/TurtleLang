@@ -1,0 +1,17 @@
+#pragma once
+#ifndef INSTRUCTION_RESULT_H
+#define INSTRUCTION_RESULT_H
+
+typedef enum
+{
+	INSTRUCTION_RESULT_OK = 0,
+	INSTRUCTION_RESULT_UNKNOWN_ERROR,
+	INSTRUCTION_RESULT_STACK_OVERFLOW,
+	INSTRUCTION_RESULT_STACK_UNDER_FLOW,
+	INSTRUCTION_RESULT_DIVISION_BY_ZERO,
+	INSTRUCTION_RESULT_INVALID_JUMP_INDEX,
+} instruction_result;
+
+const char* instruction_result_as_cstr(instruction_result result);
+
+#endif
