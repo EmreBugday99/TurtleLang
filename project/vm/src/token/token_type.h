@@ -1,12 +1,9 @@
 #pragma once
-#ifndef TOKEN_TYPE_H
-#define TOKEN_TYPE_H
 
 typedef enum
 {
 	TOKEN_NONE = 0,
 	TOKEN_PUSH,
-	TOKEN_POP,
 	TOKEN_ADD,
 	TOKEN_SUBTRACT,
 	TOKEN_MULTIPLICATION,
@@ -15,5 +12,3 @@ typedef enum
 	TOKEN_COMPARE,
 	TOKEN_JUMP_COMPARE
 } token_type;
-
-#endif

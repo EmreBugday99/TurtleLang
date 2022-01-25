@@ -1,13 +1,9 @@
 #pragma once
-#ifndef TOKEN_LIST_H
-#define TOKEN_LIST_H
-
 #include "token.h"
-#include "../types.h"
 
 typedef struct
 {
-	token* list;
+	token* tokens;
 	size_t elements;
 	size_t capacity;
 } token_list;
@@ -31,14 +27,14 @@ void token_list_push(token_list* list, token token_to_push);
 /// <param name="index">index to insert at</param>
 /// <param name="token_to_insert">The token that's being inserted into the token_list.</param>
 /// <returns>returns 1 if successful, returns 0 if failed to insert.</returns>
-vm_result token_list_insert(token_list* list, size_t index, token token_to_insert);
+unsigned char token_list_insert(token_list* list, size_t index, token token_to_insert);
 /// <summary>
 /// Deletes a token from the specified index.
 /// </summary>
 /// <param name="list">token_list to delete from.</param>
 /// <param name="index">index of the token that's being deleted.</param>
 /// <returns>returns 1 if successful, returns 0 if failed to insert.</returns>
-vm_result token_list_delete(token_list* list, size_t index);
+unsigned char token_list_delete(token_list* list, size_t index);
 /// <summary>
 /// Copies all the contents of one token_list to another token_list.
 /// </summary>
@@ -51,5 +47,3 @@ void token_list_copy(const token_list* copy_from, token_list* copy_to);
 /// <param name="list">token_list to increase capacity.</param>
 /// <param name="increase_count">How many more tokens this token_list needs to have?</param>
 void token_list_increase_capacity(token_list* list, size_t increase_count);
-
-#endif
