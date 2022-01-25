@@ -1,13 +1,11 @@
 #pragma once
-#include <stdint.h>
-#include "token_type.h"
+#include "../data_types/vm_data.h"
 
-typedef int64_t token_data;
+struct token;
 
-typedef struct
-{
-	token_type type;
-	token_data data;
-} token;
-
-token token_create(const token_type type, const int64_t data);
+void* token_create(const unsigned char type, const vm_data data);
+unsigned char token_get_type(const struct token* token);
+void token_set_type(struct token* token, const unsigned char type);
+vm_data token_get_data(const struct token* token);
+void token_set_data(struct token* token, const vm_data data);
+size_t token_get_size(void);

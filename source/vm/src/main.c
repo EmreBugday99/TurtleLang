@@ -1,25 +1,27 @@
-#include <stdio.h>
+#include <stdlib.h>
 
-#include "token/token_list.h"
+#include "data_types/list.h"
+#include "token/token.h"
+#include "token/token_type.h"
 #include "virtual_machine/virtual_machine.h"
 
 int main()
 {
-	struct virtual_machine* vm = vm_create();
+	void* token1 = token_create(TOKEN_PUSH, 5);
+	void* token2 = token_create(TOKEN_PUSH, 10);
+	void* token3 = token_create(TOKEN_ADD, 0);
 
-	token_list_push(&vm->token_list, token_create(TOKEN_PUSH, 2));
-	token_list_push(&vm->token_list, token_create(TOKEN_PUSH, 4));
-	token_list_push(&vm->token_list, token_create(TOKEN_ADD, 0));
-	token_list_push(&vm->token_list, token_create(TOKEN_PUSH, 2));
-	token_list_push(&vm->token_list, token_create(TOKEN_PUSH, 2));
-	token_list_push(&vm->token_list, token_create(TOKEN_JUMP_COMPARE, 6));
-	token_list_push(&vm->token_list, token_create(TOKEN_PUSH, 444));
-	token_list_push(&vm->token_list, token_create(TOKEN_PUSH, 555));
+	struct virtual_machine* vm = vm_create();
+	list_add(vm->token_list, token1);
+	list_add(vm->token_list, token2);
+	list_add(vm->token_list, token3);
 
 	vm_start(vm);
 
-	stack_peek(vm->stack);
-	printf("peek: %lld \n", vm->stack->cached_data);
-
+	free(vm->token_list);
+	free(vm);
+	free(token1);
+	free(token2);
+	free(token3);
 	return 0;
 }
