@@ -15,3 +15,4 @@ size_t stack_get_elements(const struct stack* stack);
 vm_data stack_get_cache(const struct stack* stack);
 void stack_set_cache(struct stack* stack, const vm_data data);
 vm_data stack_get_data(const struct stack* stack, const size_t index);
+void stack_delete(struct stack* stack);

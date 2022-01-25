@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "data_types/list.h"
 #include "token/token.h"
@@ -23,5 +25,6 @@ int main()
 	free(token1);
 	free(token2);
 	free(token3);
+
 	return 0;
 }

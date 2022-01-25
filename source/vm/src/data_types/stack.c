@@ -91,3 +91,9 @@ vm_data stack_get_data(const struct stack* stack, const size_t index)
 {
 	return stack->data_stack[index];
 }
+
+void stack_delete(struct stack* stack)
+{
+	free(stack);
+	stack = NULL;
+}
