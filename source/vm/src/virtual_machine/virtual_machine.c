@@ -131,7 +131,7 @@ void vm_dump_stack(const struct virtual_machine* vm)
 
 	for (size_t i = 0; i < stack_get_elements(vm->stack); i++)
 	{
-		printf("%lld \n", stack_get_data(vm->stack, i));
+		printf("%li \n", stack_get_data(vm->stack, i));
 	}
 
 	printf("\n");

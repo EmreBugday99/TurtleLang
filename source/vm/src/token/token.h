@@ -1,5 +1,6 @@
 #pragma once
 #include "../data_types/vm_data.h"
+#include <stddef.h>
 
 struct token;
 

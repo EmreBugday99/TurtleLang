@@ -16,10 +16,6 @@ project "VirtualMachine"
 	-- Defines without any filter
 	defines {}
 
-	filter "system:windows"
-		cdialect "C11"
-		defines {"TURTLE_OS_WINDOWS"}
-
 	filter "configurations:Debug"
 		defines {"TURTLE_DEBUG"}
 		runtime "Debug"
@@ -29,3 +25,11 @@ project "VirtualMachine"
         defines {"TURTLE_RELEASE"}
 		runtime "Release"
 		optimize "on"
+
+	filter "system:windows"
+		cdialect "C11"
+		defines {"TURTLE_OS_WINDOWS"}
+
+	filter "system:linux"
+		cdialect "gnu11"
+		defines {"TURTLE_OS_LINUX"}
