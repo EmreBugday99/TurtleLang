@@ -6,9 +6,19 @@
 #include "../token/token.h"
 #include "../token/token_type.h"
 
-struct virtual_machine* vm_create(void)
+
+struct virtual_machine
+{
+	void* token_list;
+	size_t token_pointer;
+	void* stack;
+};
+
+void* vm_create(void)
 {
 	struct virtual_machine* vm = (struct virtual_machine*)malloc(sizeof(struct virtual_machine));
+	if (vm == NULL)
+		return NULL;
 
 	vm->token_pointer = 0;
 	vm->token_list = list_create(5, token_get_size());
@@ -17,7 +27,7 @@ struct virtual_machine* vm_create(void)
 	return vm;
 }
 
-void vm_execute_token(struct virtual_machine* vm, void* token)
+void vm_execute_token(struct virtual_machine* vm, const void* token)
 {
 	switch (token_get_type(token))
 	{
@@ -135,4 +145,24 @@ void vm_dump_stack(const struct virtual_machine* vm)
 	}
 
 	printf("\n");
+}
+
+void* vm_get_token_list(const struct virtual_machine* vm)
+{
+	return vm->token_list;
+}
+
+size_t vm_get_token_pointer(const struct virtual_machine* vm)
+{
+	return vm->token_pointer;
+}
+
+void vm_set_token_pointer(struct virtual_machine* vm, const size_t token_pointer)
+{
+	vm->token_pointer = token_pointer;
+}
+
+void* vm_get_stack(const struct virtual_machine* vm)
+{
+	return vm->stack;
 }

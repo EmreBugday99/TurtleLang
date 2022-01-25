@@ -11,14 +11,14 @@ int main()
 	void* token2 = token_create(TOKEN_PUSH, 10);
 	void* token3 = token_create(TOKEN_ADD, 0);
 
-	struct virtual_machine* vm = vm_create();
-	list_add(vm->token_list, token1);
-	list_add(vm->token_list, token2);
-	list_add(vm->token_list, token3);
+	void* vm = vm_create();
+	list_add(vm_get_token_list(vm), token1);
+	list_add(vm_get_token_list(vm), token2);
+	list_add(vm_get_token_list(vm), token3);
 
 	vm_start(vm);
 
-	free(vm->token_list);
+	free(vm_get_token_list(vm));
 	free(vm);
 	free(token1);
 	free(token2);
