@@ -5,7 +5,7 @@
 
 int main()
 {
-	virtual_machine* vm = vm_create();
+	struct virtual_machine* vm = vm_create();
 
 	token_list_push(&vm->token_list, token_create(TOKEN_PUSH, 2));
 	token_list_push(&vm->token_list, token_create(TOKEN_PUSH, 4));
@@ -18,8 +18,8 @@ int main()
 
 	vm_start(vm);
 
-	vm_stack_peek(&vm->stack);
-	printf("peek: %lld \n", vm->stack.cached_data);
+	stack_peek(vm->stack);
+	printf("peek: %lld \n", vm->stack->cached_data);
 
 	return 0;
 }

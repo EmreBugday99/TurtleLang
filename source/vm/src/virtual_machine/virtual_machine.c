@@ -3,18 +3,18 @@
 #include <stdlib.h>
 #include "vm_types.h"
 
-virtual_machine* vm_create(void)
+struct virtual_machine* vm_create(void)
 {
-	virtual_machine* vm = (virtual_machine*)malloc(sizeof(virtual_machine));
+	struct virtual_machine* vm = (struct virtual_machine*)malloc(sizeof(struct virtual_machine));
 
 	vm->token_pointer = 0;
 	vm->token_list = token_list_create(0);
-	vm->stack = vm_stack_create(1024);
+	vm->stack = stack_create(1024);
 
 	return vm;
 }
 
-void vm_execute_token(virtual_machine* vm, token vm_token)
+void vm_execute_token(struct virtual_machine* vm, token vm_token)
 {
 	switch (vm_token.type)
 	{
@@ -25,51 +25,51 @@ void vm_execute_token(virtual_machine* vm, token vm_token)
 	}
 	case TOKEN_PUSH:
 	{
-		vm_stack_push(&vm->stack, vm_token.data);
+		stack_push(vm->stack, vm_token.data);
 		break;
 	}
 	case TOKEN_ADD:
 	{
-		vm_stack_pop(&vm->stack);
-		const vm_data data1 = vm->stack.cached_data;
+		stack_pop(vm->stack);
+		const vm_data data1 = vm->stack->cached_data;
 
-		vm_stack_pop(&vm->stack);
-		const vm_data data2 = vm->stack.cached_data;
+		stack_pop(vm->stack);
+		const vm_data data2 = vm->stack->cached_data;
 
-		vm_stack_push(&vm->stack, data1 + data2);
+		stack_push(vm->stack, data1 + data2);
 		break;
 	}
 	case TOKEN_SUBTRACT:
 	{
-		vm_stack_pop(&vm->stack);
-		const vm_data data1 = vm->stack.cached_data;
+		stack_pop(vm->stack);
+		const vm_data data1 = vm->stack->cached_data;
 
-		vm_stack_pop(&vm->stack);
-		const vm_data data2 = vm->stack.cached_data;
+		stack_pop(vm->stack);
+		const vm_data data2 = vm->stack->cached_data;
 
-		vm_stack_push(&vm->stack, data1 - data2);
+		stack_push(vm->stack, data1 - data2);
 		break;
 	}
 	case TOKEN_MULTIPLICATION:
 	{
-		vm_stack_pop(&vm->stack);
-		const vm_data data1 = vm->stack.cached_data;
+		stack_pop(vm->stack);
+		const vm_data data1 = vm->stack->cached_data;
 
-		vm_stack_pop(&vm->stack);
-		const vm_data data2 = vm->stack.cached_data;
+		stack_pop(vm->stack);
+		const vm_data data2 = vm->stack->cached_data;
 
-		vm_stack_push(&vm->stack, data1 * data2);
+		stack_push(vm->stack, data1 * data2);
 		break;
 	}
 	case TOKEN_DIVISION:
 	{
-		vm_stack_pop(&vm->stack);
-		const vm_data data1 = vm->stack.cached_data;
+		stack_pop(vm->stack);
+		const vm_data data1 = vm->stack->cached_data;
 
-		vm_stack_pop(&vm->stack);
-		const vm_data data2 = vm->stack.cached_data;
+		stack_pop(vm->stack);
+		const vm_data data2 = vm->stack->cached_data;
 
-		vm_stack_push(&vm->stack, data1 / data2);
+		stack_push(vm->stack, data1 / data2);
 		break;
 	}
 	case TOKEN_JUMP:
@@ -79,21 +79,21 @@ void vm_execute_token(virtual_machine* vm, token vm_token)
 	}
 	case TOKEN_COMPARE:
 	{
-		vm_stack_pop(&vm->stack);
+		stack_pop(vm->stack);
 
-		if (vm->stack.cached_data == vm_token.data)
-			vm_stack_push(&vm->stack, 1);
+		if (vm->stack->cached_data == vm_token.data)
+			stack_push(vm->stack, 1);
 		else
-			vm_stack_push(&vm->stack, 0);
+			stack_push(vm->stack, 0);
 		break;
 	}
 	case TOKEN_JUMP_COMPARE:
 	{
-		vm_stack_pop(&vm->stack);
-		const vm_data data1 = vm->stack.cached_data;
+		stack_pop(vm->stack);
+		const vm_data data1 = vm->stack->cached_data;
 
-		vm_stack_pop(&vm->stack);
-		const vm_data data2 = vm->stack.cached_data;
+		stack_pop(vm->stack);
+		const vm_data data2 = vm->stack->cached_data;
 
 		if (data1 == data2)
 			vm->token_pointer = vm_token.data;
@@ -112,7 +112,7 @@ void vm_execute_token(virtual_machine* vm, token vm_token)
 #endif // TURTLE_DEBUG
 }
 
-void vm_start(virtual_machine* vm)
+void vm_start(struct virtual_machine* vm)
 {
 	vm->token_pointer = 0;
 
@@ -122,13 +122,13 @@ void vm_start(virtual_machine* vm)
 	}
 }
 
-void vm_dump_stack(const virtual_machine* vm)
+void vm_dump_stack(const struct virtual_machine* vm)
 {
 	printf("Stack Dump: \n");
 
-	for (size_t i = 0; i < vm->stack.elements; i++)
+	for (size_t i = 0; i < vm->stack->elements; i++)
 	{
-		printf("%lld \n", vm->stack.data_stack[i]);
+		printf("%lld \n", vm->stack->data_stack[i]);
 	}
 
 	printf("\n");
