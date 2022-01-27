@@ -4,9 +4,9 @@
 
 struct list
 {
-	size_t capacity;
-	size_t elements;
-	size_t data_size;
+	uint64_t capacity;
+	uint64_t elements;
+	uint64_t data_size;
 	void* list;
 };
 
@@ -140,17 +140,17 @@ void* list_get_unsafe(struct list* list, const size_t index)
 	return (char*)list->list + (index * list->data_size);
 }
 
-size_t list_get_element_count(const struct list* list)
+uint64_t list_get_element_count(const struct list* list)
 {
 	return list->elements;
 }
 
-size_t list_get_capacity(const struct list* list)
+uint64_t list_get_capacity(const struct list* list)
 {
 	return list->capacity;
 }
 
-size_t list_get_data_size(const struct list* list)
+uint64_t list_get_data_size(const struct list* list)
 {
 	return list->data_size;
 }

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "../data_types/vm_data.h"
 
-
 struct instruction
 {
 	instruction_callback callback;
@@ -25,4 +24,9 @@ void instruction_delete(struct instruction* instruction)
 {
 	free(instruction);
 	instruction = NULL;
+}
+
+uint64_t instruction_get_size(void)
+{
+	return sizeof(struct instruction);
 }

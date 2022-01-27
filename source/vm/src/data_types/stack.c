@@ -1,5 +1,6 @@
 #include "stack.h"
 #include <stdlib.h>
+#include "../result.h"
 
 struct stack
 {
@@ -27,44 +28,50 @@ void* stack_create(const size_t capacity)
 	return new_stack;
 }
 
-unsigned char stack_push(struct stack* stack, const vm_data data)
+result stack_push(struct stack* stack, const vm_data data)
 {
 	if (stack_is_full(stack) == 1)
-		return 0;
+		return RESULT_FALSE;
 
 	stack->data_stack[stack->elements++] = data;
-	return 1;
+	return RESULT_TRUE;
 }
 
-unsigned char stack_pop(struct stack* stack)
+result stack_pop(struct stack* stack)
 {
 	if (stack_is_empty(stack) == 1)
-		return 0;
+		return RESULT_FALSE;
 
 	stack->cache = stack->data_stack[stack->elements - 1];
 	stack->elements--;
 
-	return 1;
+	return RESULT_TRUE;
 }
 
-unsigned char stack_peek(struct stack* stack)
+result stack_peek(struct stack* stack)
 {
 	if (stack_is_empty(stack) == 1)
-		return 0;
+		return RESULT_FALSE;
 
 	stack->cache = stack->data_stack[stack->elements - 1];
 
-	return 1;
+	return RESULT_TRUE;
 }
 
-unsigned char stack_is_empty(const struct stack* stack)
+result stack_is_empty(const struct stack* stack)
 {
-	return stack->elements == 0;
+	if (stack->elements == 0)
+		return RESULT_TRUE;
+
+	return RESULT_FALSE;
 }
 
 unsigned char stack_is_full(const struct stack* stack)
 {
-	return stack->elements == stack->capacity;
+	if (stack->elements >= stack->capacity)
+		return RESULT_TRUE;
+
+	return RESULT_FALSE;
 }
 
 size_t stack_get_capacity(const struct stack* stack)
