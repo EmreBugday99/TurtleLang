@@ -2,7 +2,7 @@
 #include "../data_types/stack.h"
 #include "../program/program.h"
 
-enum instruction_result instruction_callback_stack_push(const void* program, vm_data data)
+enum instruction_result instruction_callback_stack_push(void* program, vm_data data)
 {
 	if (stack_push(program_get_stack(program), data) == RESULT_FALSE)
 		return INSTRUCTION_RESULT_STACK_OVERFLOW;
