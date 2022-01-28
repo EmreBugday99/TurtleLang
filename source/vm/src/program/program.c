@@ -6,6 +6,13 @@
 #include "instruction_callback_type.h"
 #include "../data_types/list.h"
 #include "../data_types/stack.h"
+
+#define MAP_IMPLEMENTATION
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdio.h>
+
 #include "../data_types/map.h"
 #include "../token/token_type.h"
 
@@ -21,30 +28,16 @@
 #include "../instruction_callbacks/instruction_callback_stack_compare.h"
 #include "../token/token.h"
 
+GENERATE_MAP(instruction_callback)
+
 struct program
 {
 	void* instruction_list;
 	void* stack;
 	void* vm;
-	void* instruction_map;
+	struct map_instruction_callback instruction_map;
 	uint64_t instruction_pointer;
 };
-
-#ifdef TURTLE_OS_WINDOWS
-#pragma pack(push, 1)
-struct callback
-{
-	instruction_callback callback;
-};
-#pragma pack(pop)
-#endif
-
-#ifdef TURTLE_OS_LINUX
-struct callback
-{
-	instruction_callback callback;
-}__attribute__((packed));
-#endif
 
 void* program_create(void* vm)
 {
@@ -55,7 +48,7 @@ void* program_create(void* vm)
 	new_program->instruction_list = list_create(20, sizeof(instruction_get_size()));
 	new_program->stack = stack_create(1024);
 	new_program->vm = vm;
-	new_program->instruction_map = map_create(20, sizeof(struct callback));
+	new_program->instruction_map = map_create_instruction_callback(4);
 	new_program->instruction_pointer = 0;
 
 	return new_program;
@@ -73,9 +66,10 @@ result program_start(struct program* program)
 		const uint8_t type = instruction_get_type(list_get_unsafe(program->instruction_list, program->instruction_pointer));
 		const vm_data data = instruction_get_data(list_get_unsafe(program->instruction_list, program->instruction_pointer));
 
-		const instruction_callback callback = program_get_callback_from_instruction_map(program, type);
+		instruction_callback callback = program_get_callback_from_instruction_map(program, type);
 
 		callback(program, data);
+		printf("ip: %llu \n", program->instruction_pointer);
 		program_dump_stack(program);
 		program->instruction_pointer++;
 	}
@@ -145,39 +139,28 @@ result program_insert_standard_instructions_to_instruction_map(struct program* p
 	if (program == NULL)
 		return RESULT_FALSE;
 
-	struct callback inst_stack_none = { &instruction_callback_none };
-	struct callback inst_stack_push = { &instruction_callback_stack_push };
-	struct callback inst_stack_pop = { &instruction_callback_stack_pop };
-	struct callback inst_stack_add = { &instruction_callback_stack_add };
-	struct callback inst_stack_subtract = { &instruction_callback_stack_subtract };
-	struct callback inst_stack_multiply = { &instruction_callback_stack_multiplication };
-	struct callback inst_stack_divide = { &instruction_callback_stack_division };
-	struct callback inst_jump = { &instruction_callback_jump };
-	struct callback inst_stack_compare = { &instruction_callback_stack_compare };
-	struct callback inst_stack_jump_compare = { &instruction_callback_stack_jump_compare };
-	map_add(program->instruction_map, TOKEN_NONE, &inst_stack_none);
-	map_add(program->instruction_map, TOKEN_PUSH, &inst_stack_push);
-	map_add(program->instruction_map, TOKEN_POP, &inst_stack_pop);
-	map_add(program->instruction_map, TOKEN_ADD, &inst_stack_add);
-	map_add(program->instruction_map, TOKEN_SUBTRACT, &inst_stack_subtract);
-	map_add(program->instruction_map, TOKEN_MULTIPLICATION, &inst_stack_multiply);
-	map_add(program->instruction_map, TOKEN_DIVISION, &inst_stack_divide);
-	map_add(program->instruction_map, TOKEN_JUMP, &inst_jump);
-	map_add(program->instruction_map, TOKEN_COMPARE, &inst_stack_compare);
-	map_add(program->instruction_map, TOKEN_JUMP_COMPARE, &inst_stack_jump_compare);
+	map_add_instruction_callback(&program->instruction_map, TOKEN_NONE, &instruction_callback_none);
+	map_add_instruction_callback(&program->instruction_map, TOKEN_PUSH, &instruction_callback_stack_push);
+	map_add_instruction_callback(&program->instruction_map, TOKEN_POP, &instruction_callback_stack_pop);
+	map_add_instruction_callback(&program->instruction_map, TOKEN_ADD, &instruction_callback_stack_add);
+	map_add_instruction_callback(&program->instruction_map, TOKEN_SUBTRACT, &instruction_callback_stack_subtract);
+	map_add_instruction_callback(&program->instruction_map, TOKEN_MULTIPLICATION, &instruction_callback_stack_multiplication);
+	map_add_instruction_callback(&program->instruction_map, TOKEN_DIVISION, &instruction_callback_stack_division);
+	map_add_instruction_callback(&program->instruction_map, TOKEN_JUMP, &instruction_callback_jump);
+	map_add_instruction_callback(&program->instruction_map, TOKEN_COMPARE, &instruction_callback_stack_compare);
+	map_add_instruction_callback(&program->instruction_map, TOKEN_JUMP_COMPARE, &instruction_callback_stack_jump_compare);
 
 	return RESULT_TRUE;
 }
 
-void program_add_instruction_to_instruction_map(const struct program* program, uint8_t key, void* instruction)
+void program_add_instruction_to_instruction_map(struct program* program, uint8_t key, instruction_callback callback)
 {
-	map_add(program->instruction_map, key, instruction);
+	map_add_instruction_callback(&program->instruction_map, key, callback);
 }
 
-instruction_callback program_get_callback_from_instruction_map(const struct program* program, uint8_t key)
+instruction_callback program_get_callback_from_instruction_map(struct program* program, uint8_t key)
 {
-	const struct callback* cb = (struct callback*)map_get_unsafe(program->instruction_map, key);
-	return cb->callback;
+	return map_get_unsafe_instruction_callback(&program->instruction_map, key);
 }
 
 uint64_t program_get_size(void)
