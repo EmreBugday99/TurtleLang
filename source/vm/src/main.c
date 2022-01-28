@@ -1,4 +1,5 @@
 #include "data_types/list.h"
+#include "program/instruction.h"
 #include "program/program.h"
 #include "token/token.h"
 #include "token/token_type.h"
@@ -6,6 +7,8 @@
 
 int main()
 {
+	dump_struct_size();
+
 	void* vm = vm_create();
 
 	void* token1 = token_create(TOKEN_PUSH, 5);
@@ -21,7 +24,6 @@ int main()
 
 	list_add(vm_get_program_list(vm), program);
 	vm_start(vm);
-
 
 	return 0;
 }

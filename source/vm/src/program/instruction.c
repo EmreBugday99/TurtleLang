@@ -1,11 +1,25 @@
 #include "instruction.h"
+
+#include <stdio.h>
 #include <stdlib.h>
 
+#ifdef TURTLE_OS_WINDOWS
+#pragma pack(push, 1)
 struct instruction
 {
 	uint8_t type;
 	vm_data data;
 };
+#pragma pack(pop)
+#endif
+
+#ifdef TURTLE_OS_LINUX
+struct instruction
+{
+	uint8_t type;
+	vm_data data;
+}__attribute__((packed));
+#endif
 
 void* instruction_create(const uint8_t type, vm_data data)
 {
@@ -32,11 +46,19 @@ uint8_t instruction_get_type(const struct instruction* instruction)
 
 vm_data instruction_get_data(struct instruction* instruction)
 {
-	vm_data data = instruction->data;
-	return data;
+	const uint8_t* data = &instruction->type + 1;
+	return *data;
 }
 
 uint64_t instruction_get_size(void)
 {
 	return sizeof(struct instruction);
+}
+
+void dump_struct_size(void)
+{
+	uint64_t size = sizeof(uint8_t) + sizeof(vm_data);
+
+	printf("%llu \n", sizeof(struct instruction));
+	printf("%llu \n", size);
 }

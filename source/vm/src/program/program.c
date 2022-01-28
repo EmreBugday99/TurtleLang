@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include "instruction.h"
 #include "instruction_callback_type.h"
-#include "program_macros.h"
 #include "../data_types/list.h"
 #include "../data_types/stack.h"
 #include "../data_types/map.h"
@@ -31,10 +30,21 @@ struct program
 	uint64_t instruction_pointer;
 };
 
+#ifdef TURTLE_OS_WINDOWS
+#pragma pack(push, 1)
 struct callback
 {
 	instruction_callback callback;
 };
+#pragma pack(pop)
+#endif
+
+#ifdef TURTLE_OS_LINUX
+struct callback
+{
+	instruction_callback callback;
+}__attribute__((packed));
+#endif
 
 void* program_create(void* vm)
 {
@@ -45,7 +55,6 @@ void* program_create(void* vm)
 	new_program->instruction_list = list_create(20, sizeof(instruction_get_size()));
 	new_program->stack = stack_create(1024);
 	new_program->vm = vm;
-	//TODO-> FIX MAP INCREASE CAPACITY BUG
 	new_program->instruction_map = map_create(20, sizeof(struct callback));
 	new_program->instruction_pointer = 0;
 
@@ -136,26 +145,26 @@ result program_insert_standard_instructions_to_instruction_map(struct program* p
 	if (program == NULL)
 		return RESULT_FALSE;
 
-	struct callback inst_stack_none = { &instruction_callback_none }; \
-		struct callback inst_stack_push = { &instruction_callback_stack_push }; \
-		struct callback inst_stack_pop = { &instruction_callback_stack_pop }; \
-		struct callback inst_stack_add = { &instruction_callback_stack_add }; \
-		struct callback inst_stack_subtract = { &instruction_callback_stack_subtract }; \
-		struct callback inst_stack_multiply = { &instruction_callback_stack_multiplication }; \
-		struct callback inst_stack_divide = { &instruction_callback_stack_division }; \
-		struct callback inst_jump = { &instruction_callback_jump }; \
-		struct callback inst_stack_compare = { &instruction_callback_stack_compare }; \
-		struct callback inst_stack_jump_compare = { &instruction_callback_stack_jump_compare }; \
-		map_add(program->instruction_map, TOKEN_NONE, &inst_stack_none); \
-		map_add(program->instruction_map, TOKEN_PUSH, &inst_stack_push); \
-		map_add(program->instruction_map, TOKEN_POP, &inst_stack_pop); \
-		map_add(program->instruction_map, TOKEN_ADD, &inst_stack_add); \
-		map_add(program->instruction_map, TOKEN_SUBTRACT, &inst_stack_subtract); \
-		map_add(program->instruction_map, TOKEN_MULTIPLICATION, &inst_stack_multiply); \
-		map_add(program->instruction_map, TOKEN_DIVISION, &inst_stack_divide); \
-		map_add(program->instruction_map, TOKEN_JUMP, &inst_jump); \
-		map_add(program->instruction_map, TOKEN_COMPARE, &inst_stack_compare); \
-		map_add(program->instruction_map, TOKEN_JUMP_COMPARE, &inst_stack_jump_compare);
+	struct callback inst_stack_none = { &instruction_callback_none };
+	struct callback inst_stack_push = { &instruction_callback_stack_push };
+	struct callback inst_stack_pop = { &instruction_callback_stack_pop };
+	struct callback inst_stack_add = { &instruction_callback_stack_add };
+	struct callback inst_stack_subtract = { &instruction_callback_stack_subtract };
+	struct callback inst_stack_multiply = { &instruction_callback_stack_multiplication };
+	struct callback inst_stack_divide = { &instruction_callback_stack_division };
+	struct callback inst_jump = { &instruction_callback_jump };
+	struct callback inst_stack_compare = { &instruction_callback_stack_compare };
+	struct callback inst_stack_jump_compare = { &instruction_callback_stack_jump_compare };
+	map_add(program->instruction_map, TOKEN_NONE, &inst_stack_none);
+	map_add(program->instruction_map, TOKEN_PUSH, &inst_stack_push);
+	map_add(program->instruction_map, TOKEN_POP, &inst_stack_pop);
+	map_add(program->instruction_map, TOKEN_ADD, &inst_stack_add);
+	map_add(program->instruction_map, TOKEN_SUBTRACT, &inst_stack_subtract);
+	map_add(program->instruction_map, TOKEN_MULTIPLICATION, &inst_stack_multiply);
+	map_add(program->instruction_map, TOKEN_DIVISION, &inst_stack_divide);
+	map_add(program->instruction_map, TOKEN_JUMP, &inst_jump);
+	map_add(program->instruction_map, TOKEN_COMPARE, &inst_stack_compare);
+	map_add(program->instruction_map, TOKEN_JUMP_COMPARE, &inst_stack_jump_compare);
 
 	return RESULT_TRUE;
 }

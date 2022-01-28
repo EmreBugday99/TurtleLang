@@ -9,3 +9,4 @@ void instruction_delete(struct instruction* instruction);
 uint8_t instruction_get_type(const struct instruction* instruction);
 vm_data instruction_get_data(struct instruction* instruction);
 uint64_t instruction_get_size(void);
+void dump_struct_size(void);
